@@ -28,8 +28,11 @@
 
   <!-- RIGHT -->
   <div class="right">
+    <h2>Auto Farmers</h2>
+    <div id="autoShop"></div>
+
     <h2>Upgrades</h2>
-    <div id="shop"></div>
+    <div id="upgradeShop"></div>
   </div>
 
 </div>
@@ -39,15 +42,22 @@ let clicks = 0;
 let perClick = 1;
 let cps = 0;
 
-let autoLevel = 0;
-let autoCost = 10;
-let maxAuto = 1000;
-
-let upgrades = [
-  {name:"Stronger Click", desc:"x2 manual clicks", cost:100, bought:false},
-  {name:"Mega Click", desc:"x3 manual clicks", cost:500, bought:false},
-  {name:"Auto Multiplier", desc:"x2 auto income", cost:1000, bought:false}
+// AUTO FARMERS
+let autos = [
+  {name:"Baby Donkey", base:0.1, cost:10, level:0, unlock:0},
+  {name:"Farm Donkey", base:1, cost:100, level:0, unlock:50},
+  {name:"Factory Donkey", base:5, cost:500, level:0, unlock:200},
+  {name:"Mega Donkey", base:20, cost:2000, level:0, unlock:1000}
 ];
+
+// UPGRADES (one-time)
+let upgrades = [
+  {name:"Double Click", desc:"x2 manual", cost:200, bought:false},
+  {name:"Triple Click", desc:"x3 manual", cost:1000, bought:false},
+  {name:"Auto Boost", desc:"x2 all auto", cost:5000, bought:false}
+];
+
+let autoMultiplier = 1;
 
 function format(n){
   if(n>=1e12) return (n/1e12).toFixed(2)+"T";
@@ -64,28 +74,37 @@ function clickDonkey(){
   update();
 }
 
-function buyAuto(){
-  if(autoLevel>=maxAuto) return;
-  if(clicks>=autoCost){
-    clicks-=autoCost;
-    autoLevel++;
-    cps += 0.10;
-    autoCost = Math.floor(autoCost*1.2);
+function buyAuto(i){
+  let a = autos[i];
+  if(clicks>=a.cost){
+    clicks -= a.cost;
+    a.level++;
+    a.cost = Math.floor(a.cost*1.2);
+    updateCPS();
     update();
   }
+}
+
+function updateCPS(){
+  cps = 0;
+  autos.forEach(a=>{
+    cps += a.level * a.base;
+  });
+  cps *= autoMultiplier;
 }
 
 function buyUpgrade(i){
   let u = upgrades[i];
   if(u.bought) return;
   if(clicks>=u.cost){
-    clicks-=u.cost;
-    u.bought=true;
+    clicks -= u.cost;
+    u.bought = true;
 
-    if(i===0) perClick*=2;
-    if(i===1) perClick*=3;
-    if(i===2) cps*=2;
+    if(i===0) perClick *= 2;
+    if(i===1) perClick *= 3;
+    if(i===2) autoMultiplier *= 2;
 
+    updateCPS();
     update();
   }
 }
@@ -103,23 +122,40 @@ function update(){
   document.getElementById("perClick").innerText=format(perClick);
   document.getElementById("cps").innerText=format(cps);
 
-  let shop=document.getElementById("shop");
-  shop.innerHTML="";
+  // AUTO SHOP
+  let autoShop = document.getElementById("autoShop");
+  autoShop.innerHTML="";
 
-  // auto clicker card
-  let auto=document.createElement("div");
-  auto.className="upgrade";
-  auto.onclick=buyAuto;
-  auto.innerHTML=`<div><strong>Auto Donkey</strong><br>0.10/sec (lvl ${autoLevel}/${maxAuto})</div><div>${format(autoCost)}</div>`;
-  shop.appendChild(auto);
+  autos.forEach((a,i)=>{
+    if(clicks>=a.unlock){
+      let div=document.createElement("div");
+      div.className="upgrade";
+      div.onclick=()=>buyAuto(i);
+      div.innerHTML=`
+        <div>
+          <strong>${a.name}</strong><br>
+          ${a.base}/s each (lvl ${a.level})
+        </div>
+        <div>${format(a.cost)}</div>
+      `;
+      autoShop.appendChild(div);
+    }
+  });
+
+  // UPGRADE SHOP
+  let upgradeShop = document.getElementById("upgradeShop");
+  upgradeShop.innerHTML="";
 
   upgrades.forEach((u,i)=>{
     if(!u.bought){
       let div=document.createElement("div");
       div.className="upgrade";
       div.onclick=()=>buyUpgrade(i);
-      div.innerHTML=`<div><strong>${u.name}</strong><br>${u.desc}</div><div>${format(u.cost)}</div>`;
-      shop.appendChild(div);
+      div.innerHTML=`
+        <div><strong>${u.name}</strong><br>${u.desc}</div>
+        <div>${format(u.cost)}</div>
+      `;
+      upgradeShop.appendChild(div);
     }
   });
 
@@ -127,14 +163,14 @@ function update(){
 }
 
 setInterval(()=>{
-  clicks+=cps;
+  clicks += cps;
   if(clicks>1e12) clicks=1e12;
   update();
 },1000);
 
-// SAVE SYSTEM
+// SAVE
 function save(){
-  localStorage.setItem("donkeySave", JSON.stringify({clicks,perClick,cps,autoLevel,autoCost,upgrades}));
+  localStorage.setItem("donkeySave", JSON.stringify({clicks,perClick,autos,upgrades,autoMultiplier}));
 }
 
 function load(){
@@ -142,11 +178,11 @@ function load(){
   if(data){
     clicks=data.clicks;
     perClick=data.perClick;
-    cps=data.cps;
-    autoLevel=data.autoLevel;
-    autoCost=data.autoCost;
+    autos=data.autos;
     upgrades=data.upgrades;
+    autoMultiplier=data.autoMultiplier || 1;
   }
+  updateCPS();
 }
 
 // THEME
