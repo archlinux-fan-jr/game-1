@@ -4,50 +4,54 @@ body {
   font-family: Arial, sans-serif;
   background: #2e3440;
   color: #eceff4;
+}
+
+.layout {
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
 }
 
-.screen {
-  display: none;
-  text-align: center;
+.left {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-right: 2px solid #3b4252;
 }
 
-.active {
-  display: block;
+.right {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
 
-button {
-  padding: 12px 24px;
-  margin: 10px;
-  border: none;
-  border-radius: 10px;
-  background: #5e81ac;
-  color: white;
-  font-size: 1.2rem;
+#donkey {
+  width: 250px;
   cursor: pointer;
+  transition: transform 0.1s;
 }
 
-button:hover {
-  background: #81a1c1;
+#donkey:active {
+  transform: scale(0.9);
 }
 
-#gameBox {
-  width: 300px;
-  height: 300px;
+.upgrade {
   background: #3b4252;
-  position: relative;
-  margin: auto;
-  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  transition: 0.2s;
 }
 
-#target {
-  width: 40px;
-  height: 40px;
-  background: #88c0d0;
-  position: absolute;
-  border-radius: 50%;
-  cursor: pointer;
+.upgrade:hover {
+  background: #434c5e;
+  transform: scale(1.02);
+}
+
+h1, h2 {
+  margin: 10px;
 }
