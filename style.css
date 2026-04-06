@@ -1,17 +1,14 @@
-/* style.css */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #2e3440;
-  color: #eceff4;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1f1f2e, #2a2a40);
+  color: white;
 }
-
 
 .layout {
   display: flex;
   height: 100vh;
 }
-
 
 .left {
   flex: 2;
@@ -19,62 +16,75 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-right: 2px solid #3b4252;
+  border-right: 2px solid rgba(255,255,255,0.1);
 }
-
 
 .right {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background: #2b303b;
+  background: rgba(0,0,0,0.2);
 }
 
+h1 {
+  margin-bottom: 10px;
+}
+
+.donkey-wrapper {
+  position: relative;
+}
 
 #donkey {
   width: 260px;
   cursor: pointer;
-  transition: transform 0.1s ease;
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+  transition: transform 0.1s;
 }
-
 
 #donkey:active {
   transform: scale(0.9);
 }
 
+#floating {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  pointer-events: none;
+}
+
+.float {
+  position: absolute;
+  color: #00ffcc;
+  font-weight: bold;
+  animation: floatUp 1s ease-out forwards;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-60px); opacity: 0; }
+}
 
 .upgrade {
-  background: #3b4252;
+  background: rgba(255,255,255,0.05);
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 12px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  transition: all 0.2s ease;
-  border: 1px solid #434c5e;
+  transition: 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
 }
-
 
 .upgrade:hover {
-  background: #434c5e;
-  transform: scale(1.03);
+  background: rgba(255,255,255,0.1);
+  transform: scale(1.02);
 }
 
-
-h1 {
-  font-size: 2.5rem;
+.desc {
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
 
-
-h2 {
-  margin: 10px;
+.cost {
+  font-weight: bold;
 }
-
-
-p {
-  opacity: 0.8;
-}
-
