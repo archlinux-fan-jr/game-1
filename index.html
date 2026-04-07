@@ -166,7 +166,7 @@ function update(){
       let div=document.createElement("div");
       div.className="card";
       div.onclick=()=>buyAuto(i);
-      div.innerHTML=`<b>${a.name}</b><br>${a.base}/s (lvl ${a.level})<br>${format(a.cost)}`;
+      div.innerHTML=`<b>${a.name}</b><br>${a.base}.0/s (lvl ${a.level})<br>${format(a.cost)}`;
       autoShop.appendChild(div);
     }
   });
