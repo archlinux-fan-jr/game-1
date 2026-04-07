@@ -18,7 +18,7 @@ function startRainCycle(){
       updateCPS();
     },120000); // active 2 min
 
-  },1200000); // every 20 min
+  },600000); // every 10 min
 }
 
 
@@ -48,14 +48,18 @@ let autos = [
 ];
 // UPGRADES
 let upgrades = [
-  {name:"Double Click", desc:"x2 manual click", cost:200, bought:false},
-  {name:"Triple Click", desc:"x3 manual click", cost:1000, bought:false},
-  {name:"Ultra Click", desc:"x5 manual click", cost:5000, bought:false},
-  {name:"Mega Click", desc:"x7 manual click", cost:15000, bought:false},
-  {name:"Hyper Click", desc:"x10 manual click", cost:100000, bought:false},
-  {name:"Quantum Click", desc:"x25 manual click", cost:1000000, bought:false},
-  {name:"God Finger", desc:"x100 manual click", cost:10000000, bought:false},
+  {name:"Double Click", desc:"x2 manual click", cost:100, bought:false},
+  {name:"Triple Click", desc:"x3 manual click", cost:200, bought:false},
+  {name:"Ultra Click", desc:"x5 manual click", cost:1000, bought:false},
 
+
+  {name:"Mega Click", desc:"x7 manual click", cost:5000, bought:false},
+  {name:"Hyper Click", desc:"x10 manual click", cost:15000, bought:false},
+  {name:"Quantum Click", desc:"x25 manual click", cost:100000, bought:false},
+  {name:"God Finger", desc:"x100 manual click", cost:1000000, bought:false},
+  {name:"Donkey rain", desc:"x3 farm every 10 mins for 2 mins", cost:1000000, bought:false},
+  
+/*
   {name:"Lucky Hoof", desc:"10% chance for 2x click", cost:5000, bought:false},
   {name:"Golden Hoof", desc:"25% chance for 3x click", cost:50000, bought:false},
   {name:"Divine Hoof", desc:"50% chance for 5x click", cost:500000, bought:false},
@@ -74,7 +78,7 @@ let upgrades = [
 
   {name:"Momentum", desc:"+1% click power every second (resets on click)", cost:300000, bought:false},
   {name:"Patience", desc:"No click for 10s → next click x20", cost:750000, bought:false},
-
+*/
 ];
 
 function format(n){
@@ -118,12 +122,16 @@ function buyUpgrade(i){
     if(i===0) perClick*=2;
     if(i===1) perClick*=3;
     if(i===2) perClick*=5;
+    if(i===3) perClick*=7;
+    if(i===4) perClick*=10;
+    if(i===5) perClick*=25;
+    if(i===6) perClick*=100;
+    if(i===7) startRainCycle();
 
-    if(i===3) autoMultiplier*=2;
-    if(i===4) autoMultiplier*=5;
-    if(i===5) autoMultiplier*=10;
+    // if(i===3) autoMultiplier*=2;
+    // if(i===4) autoMultiplier*=5;
+    // if(i===5) autoMultiplier*=10;
 
-    if(i===6) startRainCycle();
 
     updateCPS();
     update();
