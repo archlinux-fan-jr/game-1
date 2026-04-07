@@ -44,9 +44,8 @@ let cps = 0;
 let autoMultiplier = 1;
 let tempBoost = 1;
 
-// RAIN (locked until upgrade)
+// RAIN EVENT
 let rainUnlocked = false;
-
 function startRainCycle(){
   rainUnlocked = true;
 
@@ -57,10 +56,9 @@ function startRainCycle(){
     setTimeout(()=>{
       tempBoost = 1;
       updateCPS();
-    },120000); // 2 min active
+    },120000); // active 2 min
 
   },1200000); // every 20 min
-},120000);
 }
 
 // AUTOS
@@ -73,21 +71,25 @@ let autos = [
   {name:"God Donkey", base:500, cost:50000, level:0, unlock:20000},
   {name:"Galactic Donkey", base:2000, cost:1000000, level:0, unlock:200000},
   {name:"Quantum Donkey", base:10000, cost:50000000, level:0, unlock:10000000},
-  {name:"Multiverse Donkey", base:50000, cost:1000000000, level:0, unlock:100000000}
+  {name:"Multiverse Donkey", base:50000, cost:1000000000, level:0, unlock:100000000},
   {name:"Portal Donkey", base:70000, cost:10000000000, level:0, unlock:1000000000}
 
 ];
 
+// UPGRADES
 let upgrades = [
   {name:"Double Click", desc:"x2 manual", cost:200, bought:false},
   {name:"Triple Click", desc:"x3 manual", cost:1000, bought:false},
   {name:"Ultra Click", desc:"x5 manual", cost:5000, bought:false},
+  {name:"Mega Click", desc:"x7 manual", cost:5000, bought:false},
 
-  {name:"Auto Boost", desc:"x2 auto", cost:5000, bought:false},
-  {name:"Mega Boost", desc:"x5 auto", cost:50000, bought:false},
-  {name:"Insane Boost", desc:"x10 auto", cost:500000, bought:false},
+  {name:"Auto Boost", desc:"x2 auto", cost:4000, bought:false},
+  {name:"Mega Boost", desc:"x5 auto", cost:60000, bought:false},
+  {name:"God Boost", desc:"x8 auto", cost:750000, bought:false},
+  {name:"Insane Boost", desc:"x10 auto", cost:1000000, bought:false},
 
-  {name:"Donkey Rain", desc:"Unlocks rain event (3x auto every 20 min)", cost:20000, bought:false}
+  {name:"Donkey Rain", desc:"3x auto every 20 min", cost:2000000, bought:false},
+  {name:"Ultra Donkey Rain", desc:"15x auto every 20 min", cost:1000000000, bought:false}
 ];
 
 function format(n){
@@ -136,15 +138,11 @@ function buyUpgrade(i){
     if(i===4) autoMultiplier*=5;
     if(i===5) autoMultiplier*=10;
 
-    // unlock donkey rain
-    if(i===6){
-      startRainCycle();
-    }
+    if(i===6) startRainCycle();
 
     updateCPS();
     update();
   }
-}
 }
 
 function spawnFloating(text){
