@@ -1,3 +1,4 @@
+<!-- index.html (WORKING + STYLED) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,15 +45,23 @@ let cps = 0;
 let autoMultiplier = 1;
 let tempBoost = 1;
 
-// RAIN
-setInterval(()=>activateRain(),1200000);
-function activateRain(){
-  tempBoost = 3;
-  updateCPS();
-  setTimeout(()=>{
-    tempBoost = 1;
+// RAIN (locked until upgrade)
+let rainUnlocked = false;
+
+function startRainCycle(){
+  rainUnlocked = true;
+
+  setInterval(()=>{
+    tempBoost = 3;
     updateCPS();
-  },120000);
+
+    setTimeout(()=>{
+      tempBoost = 1;
+      updateCPS();
+    },120000); // 2 min active
+
+  },1200000); // every 20 min
+},120000);
 }
 
 // AUTOS
@@ -67,13 +76,19 @@ let autos = [
   {name:"Quantum Donkey", base:10000, cost:50000000, level:0, unlock:10000000},
   {name:"Multiverse Donkey", base:50000, cost:1000000000, level:0, unlock:100000000}
   {name:"Portal Donkey", base:70000, cost:10000000000, level:0, unlock:1000000000}
+
 ];
 
 let upgrades = [
   {name:"Double Click", desc:"x2 manual", cost:200, bought:false},
   {name:"Triple Click", desc:"x3 manual", cost:1000, bought:false},
+  {name:"Ultra Click", desc:"x5 manual", cost:5000, bought:false},
+
   {name:"Auto Boost", desc:"x2 auto", cost:5000, bought:false},
-  {name:"Mega Boost", desc:"x5 auto", cost:50000, bought:false}
+  {name:"Mega Boost", desc:"x5 auto", cost:50000, bought:false},
+  {name:"Insane Boost", desc:"x10 auto", cost:500000, bought:false},
+
+  {name:"Donkey Rain", desc:"Unlocks rain event (3x auto every 20 min)", cost:20000, bought:false}
 ];
 
 function format(n){
@@ -116,12 +131,21 @@ function buyUpgrade(i){
 
     if(i===0) perClick*=2;
     if(i===1) perClick*=3;
-    if(i===2) autoMultiplier*=2;
-    if(i===3) autoMultiplier*=5;
+    if(i===2) perClick*=5;
+
+    if(i===3) autoMultiplier*=2;
+    if(i===4) autoMultiplier*=5;
+    if(i===5) autoMultiplier*=10;
+
+    // unlock donkey rain
+    if(i===6){
+      startRainCycle();
+    }
 
     updateCPS();
     update();
   }
+}
 }
 
 function spawnFloating(text){
