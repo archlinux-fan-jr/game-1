@@ -48,13 +48,13 @@ let autos = [
 ];
 // UPGRADES
 let upgrades = [
-  {name:"Double Click", desc:"x2 manual", cost:200, bought:false},
-  {name:"Triple Click", desc:"x3 manual", cost:1000, bought:false},
-  {name:"Ultra Click", desc:"x5 manual", cost:5000, bought:false},
-  {name:"Mega Click", desc:"x7 manual", cost:15000, bought:false},
-  {name:"Hyper Click", desc:"x10 manual", cost:100000, bought:false},
-  {name:"Quantum Click", desc:"x25 manual", cost:1000000, bought:false},
-  {name:"God Finger", desc:"x100 manual", cost:10000000, bought:false},
+  {name:"Double Click", desc:"x2 manual click", cost:200, bought:false},
+  {name:"Triple Click", desc:"x3 manual click", cost:1000, bought:false},
+  {name:"Ultra Click", desc:"x5 manual click", cost:5000, bought:false},
+  {name:"Mega Click", desc:"x7 manual click", cost:15000, bought:false},
+  {name:"Hyper Click", desc:"x10 manual click", cost:100000, bought:false},
+  {name:"Quantum Click", desc:"x25 manual click", cost:1000000, bought:false},
+  {name:"God Finger", desc:"x100 manual click", cost:10000000, bought:false},
 
   {name:"Lucky Hoof", desc:"10% chance for 2x click", cost:5000, bought:false},
   {name:"Golden Hoof", desc:"25% chance for 3x click", cost:50000, bought:false},
@@ -75,11 +75,6 @@ let upgrades = [
   {name:"Momentum", desc:"+1% click power every second (resets on click)", cost:300000, bought:false},
   {name:"Patience", desc:"No click for 10s → next click x20", cost:750000, bought:false},
 
-  {name:"Donkey Rage", desc:"Spam clicking increases power (caps at x15)", cost:200000, bought:false},
-  {name:"Lazy Bonus", desc:"Click slower → stronger clicks", cost:200000, bought:false},
-
-  {name:"Reality Break", desc:"Clicks scale with total money (log boost)", cost:5000000, bought:false},
-  {name:"Singularity Tap", desc:"Clicks gain +0.01% of total earned", cost:20000000, bought:false}
 ];
 
 function format(n){
@@ -156,7 +151,7 @@ function update(){
       let div=document.createElement("div");
       div.className="card";
       div.onclick=()=>buyAuto(i);
-      div.innerHTML=`<b>${a.name}</b><br>${a.base}/s (lvl ${a.level})<br>${format(a.cost)}`;
+      div.innerHTML=`<b>${a.name}</b><br>${a.base}€/s (lvl ${a.level})<br>${format(a.cost)} €`;
       autoShop.appendChild(div);
     }
   });
@@ -169,7 +164,7 @@ function update(){
       let div=document.createElement("div");
       div.className="card";
       div.onclick=()=>buyUpgrade(i);
-      div.innerHTML=`<b>${u.name}</b><br>${u.desc}<br>${format(u.cost)}`;
+      div.innerHTML=`<b>${u.name}</b><br>${u.desc}<br>${format(u.cost)} €`;
       upgradeShop.appendChild(div);
     }
   });
