@@ -2,44 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Donkey Clicker 🫏</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-	<button id="themeToggle" onclick="toggleTheme()">🌙</button>
-	<button id="resetBtn" onclick="resetGame()">Reset</button>
+  <div class="top-controls">
+    <button id="resetBtn" onclick="resetGame()">Reset</button>
+    <button id="themeToggle" onclick="toggleTheme()">🌙</button>
+  </div>
 
-	<div class="layout">
+<div id="devTrigger"></div>
 
-		<div class="left">
-		  <h1>Donkey Clicker 🫏</h1>
+<div id="devConsole">
+  <input id="devInput" placeholder="enter command...">
+</div>
 
-		  <div class="donkey-wrapper">
-		    <img src="pics/donkey.png" id="donkey" onclick="clickDonkey()">
-		    <div id="floating"></div>
-		  </div>
+  <div class="layout">
 
-		  <h2 id="clicks">0</h2>
-		  <p>Manual: <span id="perClick">1</span></p>
-		  <p>Auto: <span id="cps">0</span>/s</p>
-		</div>
+    <div class="side-panel left-panel">
+      <h2>Upgrades</h2>
+      <div id="upgradeShop"></div>
+    </div>
 
-		<div class="right">
-		  <h2>Auto Farmers</h2>
-		  <div id="autoShop"></div>
+    <div class="main-area">
+      <h1>Donkey Clicker 🫏</h1>
 
-		  <h2>Upgrades</h2>
-		  <div id="upgradeShop"></div>
-		</div>
+      <div class="donkey-wrapper">
+        <img src="pics/donkey.png" id="donkey" draggable="false">
+        <div id="floating"></div>
+      </div>
 
+      <h2 id="clicks">0</h2>
+      <p>Manual: <span id="perClick">1</span></p>
+      <p>Auto: <span id="cps">0</span>/s</p>
+      <p id="eventTimer" style="font-weight: bold; color: gold;"></p>
+    </div>
 
+    <div class="side-panel right-panel">
+      <h2>Auto Farmers</h2>
+      <div id="autoShop"></div>
+    </div>
 
+  </div>
 
-	</div>
+  <footer>made by kris</footer>
 
-	<footer>made by kris</footer>
-
-	<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
