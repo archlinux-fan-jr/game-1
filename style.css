@@ -1,19 +1,14 @@
-/* OSNOVNE NASTAVITVE */
+/* OSNOVNE NASTAVITVE - Zdaj privzeto "Soft Dark" polnočna tema */
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #121212;
-    color: white;
-    overflow: hidden; /* Prepreči dvojni scrollbar na celem bodyju */
+    background: #1b1e23; /* Prej #121212 */
+    color: #d1d5db;     /* Prej white */
+    overflow: hidden; 
     display: flex;
     flex-direction: column;
     transition: background 0.3s, color 0.3s;
-}
-
-/* LIGHT MODE - Popolna definicija */
-body.light {
-    background: #f0f0f0;
-    color: #1a1a1a;
+    user-select: none;
 }
 
 /* EVENT AKTIVNO OZADJE */
@@ -38,7 +33,7 @@ body.event-active {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     color: inherit;
     font-weight: bold;
     backdrop-filter: blur(10px);
@@ -51,11 +46,6 @@ body.event-active {
     transform: translateY(-2px);
 }
 
-body.light #themeToggle, body.light #resetBtn {
-    background: rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
 /* GLAVNA POSTAVITEV (3 STOLPCI) */
 .layout {
     display: flex;
@@ -63,13 +53,12 @@ body.light #themeToggle, body.light #resetBtn {
     height: 100vh;
 }
 
-/* STRANSKA PANELA (Nadgradnje in Avtomati) */
-/* STRANSKA PANELA (Nadgradnje in Avtomati) */
+/* STRANSKA PANELA */
 .side-panel {
-    flex: 0 0 25%;     /* Prepreči širjenje (grow) in krčenje (shrink) */
+    flex: 0 0 25%;
     padding: 80px 15px 20px 15px;
     overflow-y: auto;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(0, 0, 0, 0.2); /* Prej 255, 255, 255, 0.03 */
     display: flex;
     flex-direction: column;
 }
@@ -77,13 +66,9 @@ body.light #themeToggle, body.light #resetBtn {
 .left-panel { border-right: 1px solid rgba(255, 255, 255, 0.05); }
 .right-panel { border-left: 1px solid rgba(255, 255, 255, 0.05); }
 
-body.light .side-panel {
-    background: rgba(0, 0, 0, 0.02);
-}
-
 /* SREDINSKI DEL (Osel) */
 .main-area {
-    flex: 1;             /* Avtomatsko zapolni preostanek med paneloma */
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -91,8 +76,13 @@ body.light .side-panel {
     gap: 15px;
     text-align: center;
     padding-top: 50px;
-    min-width: 0;        /* Pomembno, da vsebina ne "zlomi" layouta */
+    min-width: 0;
 }
+
+.main-area > p { margin: 0; }
+.manual-counter { color: #6BCB77; }
+.auto-counter { color: #4D96FF; }
+
 /* DONKEY SLIKA */
 .donkey-wrapper {
     position: relative;
@@ -116,169 +106,144 @@ body.light .side-panel {
     transform: scale(0.92);
 }
 
-
 /* LEBDEČI TEKST */
 .float {
     position: absolute;
     font-weight: bold;
     pointer-events: none;
-    color: lime;
-    animation: floatUp 1s forwards;
+    color: #6BCB77;
+    animation: floatUp 1.5s forwards;
     white-space: nowrap;
     z-index: 10;
     font-size: 1.2rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 @keyframes floatUp {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(-60px); }
+    from { opacity: 1; transform: translateY(30px); }
+    to { opacity: 0; transform: translateY(-100px); }
+}
+
+.float.crit-click {
+    color: #FF6B6B !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 10px rgba(255, 69, 0, 0.5), 2px 2px 4px rgba(0,0,0,0.5) !important;
+    z-index: 15;
+}
+/* Posebna animacija, ko gori Double Event */
+@keyframes doubleGlow {
+  0% { text-shadow: 0 0 10px #ff6b6b; }
+  50% { text-shadow: 0 0 20px #ffd93d, 0 0 30px #ff6b6b; }
+  100% { text-shadow: 0 0 10px #ff6b6b; }
+}
+
+#eventTimer span {
+  animation: doubleGlow 1s infinite;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+/* Jackpot efekt */
+.main-area.jackpot-active {
+    background: radial-gradient(circle, rgba(255, 217, 61, 0.15) 0%, rgba(27, 30, 35, 0) 70%);
+    transition: background 0.3s ease;
+}
+
+.jackpot-center {
+    left: 0%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
+}
+
+.float.jackpot-title {
+    color: #FFD93D !important;
+    font-size: 2.5rem !important;
+    font-weight: bold;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.8) !important;
+    z-index: 2000;
+}
+
+.float.jackpot-amount {
+    color: #ffffff !important;
+    font-size: 2rem !important;
+    font-weight: 900 !important;
+    text-shadow: 0 0 10px #FFD93D, 0 0 20px #FFD93D, 2px 2px 5px #000 !important;
+    top: 120px;
+    z-index: 2100;
 }
 
 /* KARTICE V TRGOVINI */
 .card {
-    background: rgba(255, 255, 255, 0.07);
+    background: #242930; /* Prej rgba(255,255,255,0.07) */
     padding: 15px;
     margin-bottom: 12px;
     border-radius: 12px;
     cursor: pointer;
     transition: 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid #2d333b;
+    color: #e5e7eb;
 }
 
 .card:hover {
-    background: rgba(255, 255, 255, 0.12);
-    transform: translateX(5px); /* Rahlo se premakne vstran ob hoverju */
+    background: #2d333b;
+    border-color: #4D96FF;
+    transform: translateX(5px);
 }
 
 .card:active {
     transform: scale(0.97);
 }
 
-body.light .card {
-    background: white;
-    border: 1px solid #ddd;
-    color: #333;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-body.light .card:hover {
-    background: #f9f9f9;
-}
-
-/* SCROLLBAR NASTAVITVE */
-.side-panel::-webkit-scrollbar {
-    width: 6px;
-}
-
+/* SCROLLBAR */
+.side-panel::-webkit-scrollbar { width: 6px; }
 .side-panel::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
 }
 
-body.light .side-panel::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-}
-/* Jackpot efekt omejen na sredino (okoli osla) */
-.main-area.jackpot-active {
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, rgba(18, 18, 18, 0) 70%);
-    transition: background 0.3s ease;
+/* --- LIGHT MODE (Nordic Frost) --- */
+body.light {
+    background: #e5e9f0; 
+    color: #2e3440;
 }
 
-/* Poseben stil za številko dobitka (bolj vidna) */
-.float.jackpot-amount {
-    color: #ffffff !important; /* Bela barva za jasnost */
-    font-size: 2.5rem !important;
-    font-weight: 900 !important;
-    text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 2px 2px 5px #000 !important;
-    z-index: 2100;
+body.light .side-panel { background: rgba(143, 188, 187, 0.1); }
+
+body.light .card {
+    background: #eceff4;
+    border: 1px solid #d8dee9;
+    color: #3b4252;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Velik napis "JACKPOT", ki ne skrije vsega */
-.float.jackpot-title {
-    color: #ffd700 !important;
-    font-size: 3.5rem !important;
-    font-weight: bold;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.8) !important;
-    z-index: 2000;
+body.light .card:hover {
+    background: #ffffff;
+    border-color: #88c0d0;
 }
 
-/* MOBILNA PRILAGODLJIVOST */
+body.light #themeToggle, body.light #resetBtn {
+    background: rgba(136, 192, 208, 0.2);
+    border: 1px solid rgba(136, 192, 208, 0.3);
+}
+
+body.light .float {
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.8), -1px -1px 2px rgba(255,255,255,0.8);
+}
+
+body.light .float.jackpot-title { color: #D4AF37 !important; }
+body.light .auto-counter, body.light .float.auto-click { color: #3b71ca !important; }
+
 /* MOBILNA PRILAGODLJIVOST */
 @media (max-width: 1000px) {
-    .layout {
-        flex-direction: column;
-        overflow-y: auto;
-    }
-    
-    .side-panel {
-        width: 100%;      
-        flex: none;       
-        height: auto;
-        padding: 20px;
-        overflow-y: visible;
-    }
-    
-    .main-area {
-        flex: none;
-        padding: 100px 20px 40px 20px;
-        order: 1;
-    }
-    
-    .left-panel { 
-        order: 2;
-        border-right: none; 
-        border-top: 1px solid rgba(255,255,255,0.1); 
-    } 
-    .right-panel { 
-        order: 3;
-        border-left: none; 
-        border-top: 1px solid rgba(255,255,255,0.1); 
-    }
+    .layout { flex-direction: column; overflow-y: auto; }
+    .side-panel { width: 100%; flex: none; height: auto; padding: 40px 20px; overflow-y: visible; }
+    .main-area { flex: none; padding: 100px 20px 40px 20px; order: 1; }
+    .left-panel { order: 2; border-right: none; border-top: 1px solid rgba(255,255,255,0.1); } 
+    .right-panel { order: 3; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); }
 }
 
 /* DODATKI */
-* {
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-}
-
-h1, h2 {
-    margin: 10px 0;
-}
-
-footer {
-    position: fixed;
-    bottom: 5px;
-    width: 100%;
-    text-align: center;
-    font-size: 10px;
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-#devTrigger {
-  position: absolute;
-  top: 10px;
-  right: 80px; /* between buttons */
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-}
-
-#devConsole {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0,0,0,0.8);
-  padding: 10px;
-  border-radius: 10px;
-  display: none;
-}
-
-#devConsole input {
-  background: transparent;
-  border: none;
-  color: white;
-  outline: none;
-}
+* { -webkit-tap-highlight-color: transparent; user-select: none; }
+h1, h2 { margin: 10px 0; }
+footer { position: fixed; bottom: 5px; width: 100%; text-align: center; font-size: 10px; opacity: 0.5; pointer-events: none; }
