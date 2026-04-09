@@ -79,7 +79,7 @@ body.event-active {
     min-width: 0;
 }
 
-.main-area > p { margin: 0; }
+.main-area > p { font-weight: bold; margin: 0; }
 .manual-counter { color: #6BCB77; }
 .auto-counter { color: #4D96FF; }
 

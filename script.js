@@ -1,5 +1,5 @@
 
-let clicks = 0;
+let clicks = 9999999999999;
 let basePerClick = 0.01;
 let perClick = 0.01;
 let cps = 0;
@@ -44,7 +44,7 @@ let autos = [
   {name:"Singularity Donkey", base:100000,   			cost:1000000000, 				level:0},
   {name:"Omni Donkey",        base:250000,   			cost:2500000000,				level:0},
   {name:"Legendary Donkey",   base:500000,  			cost:5000000000,				level:0},
-  {name:"Mythic Donkey",      base:99900000, 			cost:999000000000,			level:0}
+  {name:"Mythic Donkey",      base:9990000, 			cost:99990000000000,			level:0}
 ];
 
 // 1. DINAMIČNE NADGRADNJE
@@ -79,7 +79,7 @@ let upgrades = [
   
   { name: "God Click", 				desc: "x7.5 manual click", 						cost: 7500000, 		bought: false, type: "clickMult", value: 7.5 },
   
-  {	name: "Super Donkey", 		desc: "Auto farmers work 3x faster",	cost: 15000000, 	bought: false, type: "autoSpeed", value: 2 },
+  {	name: "Super Donkey", 		desc: "Auto farmers work double speed",cost: 15000000, 	bought: false, type: "autoSpeed", value: 2 },
   
   { name: "Mega Click", 			desc: "x10 manual click", 						cost: 150000000, 	bought: false, type: "clickMult", value: 10 },
   
@@ -87,16 +87,19 @@ let upgrades = [
   																																				
   { name: "Quantum Click",		desc: "x20 manual click", 						cost: 5000000000, 	bought: false, type: "clickMult", value: 20 },
   { name: "OMG Click", 				desc: "x50 manual click", 						cost: 200000000000,	bought: false, type: "clickMult", value: 50 },
-  { name: "Infinity Click", 	desc: "x999 manual click", 						cost: 999000000000000,bought: false, type: "clickMult", value: 999 }
+  { name: "Infinity Click", 	desc: "x999 manual click", 						cost: 99990000000000,bought: false, type: "clickMult", value: 999 }
   
 ];
 
 
 
 function format(n) {
-  if (n >= 1e12) return (n / 1e12).toFixed(2) + "T";
-  if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
-  if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+	if (n >= 1e18) return (n / 1e18).toFixed(2) + "Qi"; // Quintillion
+  if (n >= 1e15) return (n / 1e15).toFixed(2) + "Qa"; // Quadrillion
+  if (n >= 1e12) return (n / 1e12).toFixed(2) + "T";  // Trillion
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";   // Billion
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";   // Million
+  // ... ostalo
 
   if (n < 1000) {
     // Če je manj kot 1€, pokaži 2 decimalki (npr. 0,50)
@@ -117,21 +120,23 @@ function calculatePerClick() {
 
     upgrades.forEach(u => {
         if (u.bought) {
+            // Le nadgradnje tipa clickMult naj povečajo osnovno moč klika
             if (u.type === "clickMult") {
                 power *= u.value;
             }
-            // Super Donkey (autoSpeed) zdaj doda 20% k moči manualnega klika
-            if (u.type === "autoSpeed") {
-                power *= 1.2; 
-            }
+            // ODSTRANJENO: autoSpeed (Turbo/Super Donkey) ne vpliva več na manual klik!
         }
     });
 
     power *= combo;
+    
+    // Če je aktiven Adrenalin, pomnoži s 3
     if (adrenalineActive) power *= 3;
     
-    // DODANO: Donkey Rain zdaj množi tudi manualni klik z x3!
-    power *= tempBoost; 
+    // Če teče Donkey Rain (tempBoost je takrat 3), pomnoži manual klik s 3
+    if (tempBoost > 1) {
+        power *= 3; 
+    }
 
     return power;
 }
@@ -356,15 +361,15 @@ function startRainCycle(remainingSeconds = 0) {
     const activateRain = (secs = 60) => {
         tempBoost = 3;
         updateCPS();
-        update();      // Takoj preračunaj manual click vrednost
-        localStorage.setItem("rainEndTime", Date.now() + (secs * 1000));
+        update(); // <--- DODANO: Takoj osveži "Manual: X" številko na zaslonu
         
-        updateTimer(); // Takoj zaženi vidni timer
+        localStorage.setItem("rainEndTime", Date.now() + (secs * 1000));
+        updateTimer();
 
         setTimeout(() => {
             tempBoost = 1;
             updateCPS();
-            update();  // Ponastavi vrednosti po koncu
+            update(); // <--- DODANO: Takoj vrne številko na normalo po koncu dežja
         }, secs * 1000);
     };
 
@@ -408,12 +413,18 @@ function spawnFloating(text, isAuto = false) {
       el.classList.add("jackpot");
   }
 
+  // --- NOVA LOGIKA ZA STRANI ---
   if (isAuto) {
-    el.style.left = "-50px"; 
+    // AVTOMATSKI (modri) gredo zdaj na DESNO stran
+    el.style.right = "-70px"; 
+    el.style.left = "auto";
     el.style.color = "#4D96FF";
   } else {
-    el.style.right = "-50px";
-    // Če ni kritičen ali jackpot, uporabi privzeto lime barvo
+    // ROČNI (zeleni/rdeči) gredo zdaj na LEVO stran
+    el.style.left = "-70px";
+    el.style.right = "auto";
+    
+    // Če ni kritičen ali jackpot, uporabi privzeto zeleno barvo
     if (!text.includes("CRIT") && !text.includes("JACKPOT")) {
         el.style.color = "#6BCB77";
     }
