@@ -1,4 +1,15 @@
 /* OSNOVNE NASTAVITVE - Zdaj privzeto "Soft Dark" polnočna tema */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* Prepreči vso horizontalno premikanje */
+    overflow-x: hidden; 
+    /* Pomaga pri mobilnikih, da se stran ne odbija (bounce effect) */
+    position: relative;
+    max-width: 100vw;
+}
+
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -61,6 +72,12 @@ body.event-active {
     background: rgba(0, 0, 0, 0.2); /* Prej 255, 255, 255, 0.03 */
     display: flex;
     flex-direction: column;
+}
+
+.side-panel h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 .left-panel { border-right: 1px solid rgba(255, 255, 255, 0.05); }
@@ -302,23 +319,84 @@ body.light .float.jackpot-title { color: #D4AF37 !important; }
 body.light .auto-counter, body.light .float.auto-click { color: #3b71ca !important; }
 
 /* MOBILNA PRILAGODLJIVOST */
+/* MOBILNA PRILAGODLJIVOST - Optimizirano za manj scrollanja */
 @media (max-width: 1000px) {
-    .layout { flex-direction: column; overflow-y: auto; }
-    .side-panel { width: 100%; flex: none; height: auto; padding: 40px 20px; overflow-y: visible; }
-    .main-area { flex: none; padding: 100px 20px 40px 20px; order: 1; }
-    .left-panel { order: 2; border-right: none; border-top: 1px solid rgba(255,255,255,0.1); } 
-    .right-panel { order: 3; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); }
+    body {
+        overflow-y: auto; /* Omogoči scrollanje celotne strani na telefonu */
+    }
+
+    .layout { 
+        flex-direction: column; 
+        height: auto; 
+    }
+
+    /* Sredinski del z oslom - ostane na VRHU (order: 1) */
+    .main-area { 
+        flex: none; 
+        padding: 50px 10px 10px 10px; /* Minimalen padding zgoraj in spodaj */
+        order: 1; 
+        min-height: auto;
+        gap: 5px; /* Manjši razmik med elementi v sredini */
+    }
+
+    /* Donkey slika - manjša na telefonu, da ne zasede vsega */
+    #donkey {
+        width: 180px; 
+        margin: 5px 0;
+    }
+
+    .donkey-wrapper {
+        margin: 5px 0;
+    }
+
+    h1 { font-size: 1.3rem; margin: 0; }
+    h2#clicks { font-size: 1.8rem; margin: 5px 0; }
+
+    /* Stranski paneli - zmanjšan padding in margin */
+    .side-panel { 
+        width: 100%; 
+        flex: none; 
+        height: auto; 
+        padding: 10px 15px; /* Zelo malo paddinga */
+        overflow-y: visible; 
+    }
+
+    .side-panel h2 {
+        font-size: 1.1rem;
+        margin: 10px 0 5px 0;
+        text-align: center;
+    }
+
+    /* Kartice v trgovini naj bodo bolj kompaktne na mobilcih */
+    .card {
+        padding: 10px;
+        margin-bottom: 8px;
+    }
+
+    .left-panel { order: 2; border-top: 1px solid rgba(255,255,255,0.1); } 
+    .right-panel { order: 3; border-top: 1px solid rgba(255,255,255,0.1); }
+
+    /* Progress bar prilagoditev za manjši padding */
+    .progress-container {
+        top: 60px;
+        bottom: 10px;
+    }
 }
 @media (max-width: 600px) {
     .progress-container {
+        top: 70px; /* Spuščeno, da ne prekriva Reset/Theme gumbov */
+        bottom: 20px;
         left: 5px;
         right: 5px;
     }
+    
     .progress-bar-wrapper {
-        width: 8px; /* Ožji bar na mobilcih */
+        width: 6px; /* Še malo ožje za čistejši videz */
     }
-    .float {
-        font-size: 0.9rem;
+
+    .progress-label {
+        font-size: 8px; /* Manjši napisi */
+        top: -15px;
     }
 }
 /* DODATKI */
