@@ -44,7 +44,8 @@ let autos = [
   {name:"Singularity Donkey", base:100000,   			cost:1000000000, 				level:0},
   {name:"Omni Donkey",        base:250000,   			cost:2500000000,				level:0},
   {name:"Legendary Donkey",   base:500000,  			cost:5000000000,				level:0},
-  {name:"Mythic Donkey",      base:9990000, 			cost:99990000000000,			level:0}
+  {name:"Mythic Donkey",      base:9990000, 			cost:99990000000000,		level:0},
+  {name:"Unreachable Donkey", base:99900000000, 	cost:9999000000000000000,level:0}
 ];
 
 // 1. DINAMIČNE NADGRADNJE
@@ -87,7 +88,8 @@ let upgrades = [
   																																				
   { name: "Quantum Click",		desc: "x20 manual click", 						cost: 5000000000, 	bought: false, type: "clickMult", value: 20 },
   { name: "OMG Click", 				desc: "x50 manual click", 						cost: 200000000000,	bought: false, type: "clickMult", value: 50 },
-  { name: "Infinity Click", 	desc: "x999 manual click", 						cost: 99990000000000,bought: false, type: "clickMult", value: 999 }
+  { name: "Infinity Click", 	desc: "x999 manual click", 						cost: 99990000000000,bought: false, type: "clickMult", value: 999 },
+  { name: "Unreachable Click",desc: "x9999 manual click", 					cost: 9999000000000000000,bought: false, type: "clickMult", value: 9999 }
   
 ];
 
