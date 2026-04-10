@@ -1,5 +1,5 @@
 
-let clicks = 0;
+let clicks = 999999999999990;
 let basePerClick = 0.01;
 let perClick = 0.01;
 let cps = 0;
@@ -398,41 +398,32 @@ function updateCPS(){
 }
 
 function spawnFloating(text, isAuto = false) {
-  if (!text) return;
+    if (!text) return;
+    let el = document.createElement("div");
+    el.className = "float";
+    el.innerText = text;
+    if (text.includes("CRIT")) el.classList.add("crit-click");
+    if (text.includes("JACKPOT")) el.classList.add("jackpot");
 
-  let el = document.createElement("div");
-  el.className = "float";
-  el.innerText = text;
-  
-  // Če sporočilo vsebuje "CRIT", dodamo razred "crit-click"
-  if (text.includes("CRIT")) {
-      el.classList.add("crit-click");
-  }
+    // PRILAGODITEV ZA MOBILNE NAPRAVE: 
+    // Če je zaslon ožji od 600px, uporabimo 45px odmika, sicer 75px
+    let offset = window.innerWidth < 600 ? "45px" : "75px";
 
-  if (text.includes("JACKPOT")) {
-      el.classList.add("jackpot");
-  }
-
-  // --- NOVA LOGIKA ZA STRANI ---
-  if (isAuto) {
-    // AVTOMATSKI (modri) gredo zdaj na DESNO stran
-    el.style.right = "-70px"; 
-    el.style.left = "auto";
-    el.style.color = "#4D96FF";
-  } else {
-    // ROČNI (zeleni/rdeči) gredo zdaj na LEVO stran
-    el.style.left = "-70px";
-    el.style.right = "auto";
-    
-    // Če ni kritičen ali jackpot, uporabi privzeto zeleno barvo
-    if (!text.includes("CRIT") && !text.includes("JACKPOT")) {
-        el.style.color = "#6BCB77";
+    if (isAuto) {
+        el.style.right = "-" + offset; 
+        el.style.left = "auto";
+        el.style.color = "#4D96FF";
+    } else {
+        el.style.left = "-" + offset;
+        el.style.right = "auto";
+        if (!text.includes("CRIT") && !text.includes("JACKPOT")) el.style.color = "#6BCB77";
     }
-  }
 
-  document.getElementById("floating").appendChild(el);
-  setTimeout(() => el.remove(), 1500);
+    document.getElementById("floating").appendChild(el);
+    setTimeout(() => el.remove(), 1500);
 }
+
+
 
 function triggerJackpotEffects(bonusAmount) {
     const mainArea = document.querySelector(".main-area");
@@ -461,19 +452,30 @@ function triggerJackpotEffects(bonusAmount) {
 }
 
 function updateProgressBars() {
-    // 1. Izračun za Upgrades (Manual)
-    const totalUpgrades = upgrades.length;
-    const boughtUpgrades = upgrades.filter(u => u.bought).length;
-    const manualPercent = (boughtUpgrades / totalUpgrades) * 100;
+    // FUNKCIJA ZA PROGRESIVNO UTEŽEVANJE
+    // Prvih 20% elementov ima utež 1, zadnjih 20% utež 5
+    const getWeightedProgress = (list, checkFn) => {
+        let totalWeight = 0;
+        let currentWeight = 0;
+        
+        list.forEach((item, index) => {
+            let weight = 1;
+            let p = index / list.length;
+            if (p > 0.8) weight = 5;
+            else if (p > 0.6) weight = 4;
+            else if (p > 0.4) weight = 3;
+            else if (p > 0.2) weight = 2;
+            
+            totalWeight += weight;
+            if (checkFn(item)) currentWeight += weight;
+        });
+        return (currentWeight / totalWeight) * 100;
+    };
+
+    const manualPercent = getWeightedProgress(upgrades, u => u.bought);
     document.getElementById("manualProgress").style.height = manualPercent + "%";
 
-    // 2. Izračun za Autos
-    // Tukaj upoštevamo "odklenjenost" - vsak avtomat ima 1 nivo "odklenjenosti"
-    // ali pa vsoto vseh levelov glede na neko ciljno številko.
-    // Najbolj pregledno je: koliko različnih avtomatov si že kupil vsaj 1x.
-    const totalAutos = autos.length;
-    const unlockedAutos = autos.filter(a => a.level > 0).length;
-    const autoPercent = (unlockedAutos / totalAutos) * 100;
+    const autoPercent = getWeightedProgress(autos, a => a.level > 0);
     document.getElementById("autoProgress").style.height = autoPercent + "%";
 }
 

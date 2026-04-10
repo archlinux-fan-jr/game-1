@@ -107,6 +107,7 @@ body.event-active {
     transform: scale(0.92);
 }
 
+
 /* LEBDEČI TEKST */
 .float {
     position: absolute;
@@ -114,16 +115,20 @@ body.event-active {
     pointer-events: none;
     color: #6BCB77;
     animation: floatUp 1.5s forwards;
+    transition: opacity 0.2s;
     white-space: nowrap;
     z-index: 10;
     font-size: 1.2rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
+
 @keyframes floatUp {
     from { opacity: 1; transform: translateY(30px); }
     to { opacity: 0; transform: translateY(-100px); }
 }
+
+
 
 .float.crit-click {
     color: #FF6B6B !important;
@@ -202,17 +207,17 @@ body.event-active {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
 }
-/* STIL ZA NAPREDNE STOLPCE */
+
 .progress-container {
     position: absolute;
-    top: 20px;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-    pointer-events: none; /* Da ne moti klikanja na osla */
+    top: 100px;
+    bottom: 50px;
+    left: 10px; /* Malce bolj k robu na mobilcih */
+    right: 10px;
+    pointer-events: none;
     display: flex;
     justify-content: space-between;
-    z-index: 1;
+    z-index: 100; /* Bar naj bo nad številkami, da so številke "zadaj" */
 }
 
 .progress-bar-wrapper {
@@ -304,7 +309,18 @@ body.light .auto-counter, body.light .float.auto-click { color: #3b71ca !importa
     .left-panel { order: 2; border-right: none; border-top: 1px solid rgba(255,255,255,0.1); } 
     .right-panel { order: 3; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); }
 }
-
+@media (max-width: 600px) {
+    .progress-container {
+        left: 5px;
+        right: 5px;
+    }
+    .progress-bar-wrapper {
+        width: 8px; /* Ožji bar na mobilcih */
+    }
+    .float {
+        font-size: 0.9rem;
+    }
+}
 /* DODATKI */
 * { -webkit-tap-highlight-color: transparent; user-select: none; }
 h1, h2 { margin: 10px 0; }
