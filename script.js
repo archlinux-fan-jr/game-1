@@ -278,15 +278,15 @@ function buyUpgrade(i) {
   }
 }
 function restartAutoInterval() {
-    // Najprej ugasnemo stari interval, če obstaja
     if (autoInterval) clearInterval(autoInterval);
 
-    // Izračunamo nov interval (1000ms / množitelj)
-    // Npr. 1000 / 2 = 500ms
+    // Hitrost klikanja določajo samo nadgradnje (npr. Turbo Donkey)
     let newIntervalTime = 1000 / autoSpeedMultiplier;
 
     autoInterval = setInterval(() => {
         if (cps > 0) {
+            // Tukaj dodajamo denar: upoštevamo samo čisti cps
+            // tempBoost in adrenalineActive se tukaj NE uporabljata več
             clicks += cps;
             spawnFloating("+" + format(cps), true);
             update();
@@ -345,16 +345,13 @@ function startAdrenalineCycle(remainingSeconds = 0) {
     const activateAdrenaline = (secs = 10) => {
         adrenalineActive = true;
         localStorage.setItem("adrenalineEndTime", Date.now() + (secs * 1000));
-        
-        update();      // Takoj preračunaj manual click vrednost
-        updateTimer(); // Takoj zaženi vidni timer
-
+        update(); 
+        updateTimer();
         setTimeout(() => {
             adrenalineActive = false;
-            update();  // Ponastavi vrednosti po koncu
+            update(); 
         }, secs * 1000);
     };
-
     if (remainingSeconds > 0) activateAdrenaline(remainingSeconds);
     setInterval(() => activateAdrenaline(10), 60000);
 }
@@ -362,85 +359,83 @@ function startAdrenalineCycle(remainingSeconds = 0) {
 function startRainCycle(remainingSeconds = 0) {
     const activateRain = (secs = 60) => {
         tempBoost = 3;
-        updateCPS();
-        update(); // <--- DODANO: Takoj osveži "Manual: X" številko na zaslonu
-        
+        // updateCPS(); <-- ODSTRANJENO, ker auto ne sme reagirati na Rain
+        update(); 
         localStorage.setItem("rainEndTime", Date.now() + (secs * 1000));
         updateTimer();
-
         setTimeout(() => {
             tempBoost = 1;
-            updateCPS();
-            update(); // <--- DODANO: Takoj vrne številko na normalo po koncu dežja
+            update(); 
         }, secs * 1000);
     };
-
     if (remainingSeconds > 0) activateRain(remainingSeconds);
     setInterval(() => activateRain(60), 300000);
 }
 
+
 function roundToNiceNumber(n) {
-    // 1. Pravilo za majhne zneske (pod 10 €)
     if (n < 10) {
-        if (n < 1) return Math.ceil(n * 20) / 20; // na 0.05
-        return Math.ceil(n * 4) / 4;              // na 0.25
+        if (n < 1) return Math.ceil(n * 20) / 20;
+        return Math.ceil(n * 4) / 4;
     }
 
-    // 2. Pravilo za večje zneske (več kot 10 €)
-    let magnitude = Math.pow(10, Math.floor(Math.log10(n)) - 1); 
-    // Magnitude nam pove, kje je "druga številka" (npr. pri 48 je to 1, pri 120.000 je to 1000)
+    let s = Math.floor(n).toString();
+    let digits = s.length;
     
-    // Zaokrožimo na najbližjo vrednost glede na magnitudo (npr. na 5 ali 10)
-    let rounded = Math.ceil(n / magnitude) * magnitude;
+    // Vzamemo prve tri številke za obdelavo
+    let first = parseInt(s[0]);
+    let second = parseInt(s[1] || 0);
+    let third = parseInt(s[2] || 0);
 
-    // Dodatno preverjanje za "lepe" končnice (soda ali 5 na drugem mestu)
-    // Če hočemo biti zelo natančni pri tvojem pravilu:
-    let s = Math.round(rounded).toString();
-    let firstTwo = parseInt(s.substring(0, 2));
-    let rest = s.substring(2);
-
-    // Prilagodimo drugo številko, da je soda ali 5
-    let secondDigit = firstTwo % 10;
-    if (secondDigit !== 0 && secondDigit !== 5 && secondDigit % 2 !== 0) {
-        firstTwo += 1;
+    if (second !== 5 && second % 2 !== 0) {
+        second += 1;
+        if (second > 9) { first += 1; second = 0; }
     }
 
-    // Sestavimo nazaj
-    let finalString = firstTwo.toString();
-    for (let i = 0; i < rest.length; i++) {
-        finalString += "0";
+    if (third < 3) third = 0;
+    else if (third < 8) third = 5;
+    else {
+        third = 0;
+        second += 1;
+        if (second !== 5 && second % 2 !== 0) second += 1;
+        if (second > 9) { first += 1; second = 0; }
     }
 
-    return parseInt(finalString);
+    // Sestavimo število nazaj z matematično potenco namesto z dodajanjem ničel (FIX ZA BUG)
+    let base = (first * 100) + (second * 10) + third;
+    let finalValue = base * Math.pow(10, digits - 3);
+
+    return finalValue;
 }
 
-function buyAuto(i) {
+function buyAuto(i){
     let a = autos[i];
-    if (clicks >= a.cost) {
+    if(clicks >= a.cost){
         clicks -= a.cost;
         a.level++;
-
+        
         let nextCost = a.cost * 1.2;
         let newPrice = roundToNiceNumber(nextCost);
-
-        // Če je zaokroževanje preveč agresivno in vrne isto ceno, 
-        // jo prisilno dvignemo za minimalno enoto
+        
+        // Varnostni minimum, da se cena vedno dvigne
         if (newPrice <= a.cost) {
-            let step = Math.pow(10, Math.floor(Math.log10(a.cost)) - 1);
-            newPrice = a.cost + (step < 0.05 ? 0.05 : step);
+            newPrice = a.cost + (a.cost < 1 ? 0.05 : 1);
         }
-
+        
         a.cost = newPrice;
-        updateCPS();
+        updateCPS(); 
         update();
     }
 }
 
+// --- POPRAVLJEN CPS (Adrenalin ne vpliva več na avtomate) ---
 function updateCPS(){
-  cps = 0;
-  autos.forEach(a=> cps += a.level * a.base);
-  cps *= autoMultiplier * tempBoost;
-  if (adrenalineActive) cps *= 2;
+  let baseSum = 0;
+  autos.forEach(a => {
+      baseSum += a.level * a.base;
+  });
+  // CPS je zdaj vedno samo osnova, brez kakršnihkoli eventov (Rain/Adrenalin)
+  cps = baseSum;
 }
 
 function spawnFloating(text, isAuto = false) {
@@ -498,62 +493,61 @@ function triggerJackpotEffects(bonusAmount) {
 }
 
 function updateProgressBars() {
-    // FUNKCIJA ZA PROGRESIVNO UTEŽEVANJE
-    // Prvih 20% elementov ima utež 1, zadnjih 20% utež 5
-    const getWeightedProgress = (list, checkFn) => {
+    const getExtremeWeightedProgress = (list, checkFn) => {
         let totalWeight = 0;
         let currentWeight = 0;
-        
+        const n = list.length;
+
         list.forEach((item, index) => {
-            let weight = 1;
-            let p = index / list.length;
-            if (p > 0.8) weight = 5;
-            else if (p > 0.6) weight = 4;
-            else if (p > 0.4) weight = 3;
-            else if (p > 0.2) weight = 2;
+            // Kubična krivulja poskrbi za ekstremno razliko med začetkom in koncem
+            // Razmerje med prvim (index 0) in zadnjim (index n-1) je natanko 100
+            let weight = 1 + (99 * Math.pow(index / (n - 1), 3));
             
             totalWeight += weight;
-            if (checkFn(item)) currentWeight += weight;
+            if (checkFn(item)) {
+                currentWeight += weight;
+            }
         });
+
         return (currentWeight / totalWeight) * 100;
     };
 
-    const manualPercent = getWeightedProgress(upgrades, u => u.bought);
+    const manualPercent = getExtremeWeightedProgress(upgrades, u => u.bought);
     document.getElementById("manualProgress").style.height = manualPercent + "%";
 
-    const autoPercent = getWeightedProgress(autos, a => a.level > 0);
+    const autoPercent = getExtremeWeightedProgress(autos, a => a.level > 0);
     document.getElementById("autoProgress").style.height = autoPercent + "%";
 }
 
 
 function update() {
+    // Manualni klik še vedno dobi bonuse od eventov (iz calculatePerClick)
     perClick = calculatePerClick();
+    
+    // CPS na zaslonu zdaj vedno kaže čisto vrednost (bazni CPS)
+    // Ker eventi ne vplivajo na avtomatiko, jih tukaj ne množimo
+    let displayCPS = cps;
+
     document.getElementById("clicks").innerText = format(clicks);
     document.getElementById("perClick").innerText = format(perClick) + (combo > 1 ? " (x" + combo.toFixed(1) + ")" : "");
-    document.getElementById("cps").innerText = format(cps);
+    document.getElementById("cps").innerText = format(displayCPS);
 
-    // USTVARIMO STANJE:
-    // 1. Spremljamo kupljene nadgradnje in stopnje avtomatov
-    // 2. Spremljamo vidnost vsakega avtomata posebej (ali je nad 1/2.5 cene)
-    // 3. Spremljamo vidnost vsake nadgradnje posebej
     let currentUnlockState = upgrades.map(u => u.bought).join(",") + 
                              autos.map(a => a.level).join(",") + 
                              autos.map(a => clicks >= a.cost / 4).join(",") +
                              upgrades.map(u => clicks >= u.cost / 4).join(",");
 
-    // Če se katerikoli prag spremeni, takoj izrišemo trgovino
     if (currentUnlockState !== lastUnlockState) {
         lastUnlockState = currentUnlockState;
         renderShops();
     }
     
-    // Osvežimo samo prosojnost
     document.querySelectorAll('.card').forEach(card => {
         let cost = parseFloat(card.getAttribute('data-cost'));
         card.style.opacity = clicks >= cost ? "1" : "0.5";
     });
 
-    updateProgressBars(); // <--- DODAJ TO VRSTICO
+    updateProgressBars();
     save();
 }
 
